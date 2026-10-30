@@ -1,0 +1,88 @@
+seed: 42
+experiment: {group: study, name: gdr_net}
+data:
+  channels: [FP1-F7, F7-T7, T7-P7, P7-O1, FP1-F3, F3-C3, C3-P3, P3-O1, FP2-F4, F4-C4, C4-P4, P4-O2, FP2-F8, F8-T8, T8-P8, P8-O2, FZ-CZ, CZ-PZ]
+  type_class_names: [ABSZ, TNSZ, TCSZ]
+  sampling_rate: 256.0
+  window_sec: 8.0
+  stride_sec: 4.0
+  positive_overlap_ratio: 0.2
+  positive_event_coverage_ratio: 0.5
+  window_normalization: channel_zscore
+  batch_size: 64
+  eval_batch_size: 256
+  num_workers: 8
+  persistent_workers: true
+  prefetch_factor: 4
+  pin_memory: true
+  max_negative_windows_per_record: null
+  val_negative_pos_ratio: null
+  val_negative_only_record_windows: null
+  val_max_negative_windows_per_record: null
+model:
+  architecture: gdr_net
+  temporal_hidden: 64
+  temporal_tokens: 64
+  temporal_normalization: group
+  graph_hidden: 128
+  graph_out: 128
+  dropout: 0.2
+  graph_mode: hybrid
+  correlation_mode: absolute
+  static_graph_weight: 0.35
+  use_frequency_branch: true
+  disentangle_temperature: 1.0
+  recombine_alpha: 0.5
+  recombination_pooling: shared
+  enable_disentanglement: true
+  enable_recombination: true
+  cls_fusion: task
+  detach_style_donor: false
+loss:
+  det_pos_weight: 1.0
+  cls_class_weight: null
+  omega_det: 1.0
+  alpha_cls: 0.0
+  rho_cf: 0.2
+  sigma_cf_cls: 0.0
+train:
+  epochs: 30
+  lr: 0.0005
+  weight_decay: 0.0001
+  grad_clip: 5.0
+  fail_on_nonfinite: true
+  weighted_sampling: true
+  sampling_strategy: class_patient
+  seizure_sampling_fraction: 0.5
+  samples_per_epoch: 20000
+  balance_domains: false
+  domain_balance_alpha: 0.0
+  ema_decay: 0.99
+  recombination_start_epoch: 4
+  recombination_warmup_epochs: 6
+  checkpoint_start_epoch: 10
+  validate_before_checkpoint: false
+  checkpoint_top_k: 5
+  ensemble_top_k: 3
+  early_stop_patience: 5
+  early_stop_min_epochs: 10
+  patient_fold: 0
+  num_folds: 5
+  split_strategy: stratified
+  min_train_patients_per_class: 1
+  min_val_patients_per_class: 1
+  selection_metric: val_win_ap
+postprocess:
+  det_threshold: 0.5
+  sweep_thresholds: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95]
+  min_event_sec: 2.0
+  sweep_min_event_sec: [4.0, 8.0, 12.0]
+  merge_gap_sec: 2.0
+  max_event_sec: null
+  use_boundary_offsets: false
+  event_support_mode: stride_center
+  event_support_sec: 4.0
+  event_iou_threshold: 0.3
+  event_gt_coverage_threshold: 0.5
+  temperature_scaling: true
+  calibration_bins: 15

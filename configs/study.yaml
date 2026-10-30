@@ -1,0 +1,4 @@
+seeds: [42, 2024, 3407]
+detection_folds: [0]
+subtype_folds: [0, 1, 2, 3]
+models: [gdr_net, eegnet, cnn_lstm, eeg_conformer, dcrnn]

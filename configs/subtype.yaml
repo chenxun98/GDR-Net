@@ -1,0 +1,22 @@
+extends: common.yaml
+data:
+  task: subtype_classification
+  compute_classification: true
+  domain_level: sex
+  negative_pos_ratio: 3
+  negative_only_record_windows: 16
+  train_sets:
+    - name: tusz
+      root: ./data/tusz_processed
+      task: multiclass
+      events_file: typed_events.csv
+      include_labels: [ABSZ, TNSZ, TCSZ]
+      drop_records_with_excluded_labels: true
+model:
+  cls_fusion: task_style_temporal
+  detach_style_donor: true
+loss: {omega_det: 0.2, alpha_cls: 1.0, rho_cf: 0.1, sigma_cf_cls: 0.2}
+train:
+  num_folds: 4
+  patient_fold: 1
+  selection_metric: val_cls_macro_f1

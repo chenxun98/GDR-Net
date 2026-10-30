@@ -1,0 +1,10 @@
+extends: common.yaml
+data:
+  task: detection
+  compute_classification: false
+  domain_level: dataset
+  negative_pos_ratio: 5
+  negative_only_record_windows: 32
+  train_sets:
+    - {name: tusz, root: ./data/tusz_processed, task: detection, events_file: detection_events.csv}
+    - {name: chbmit, root: ./data/chbmit_processed, task: detection, events_file: events.csv}
